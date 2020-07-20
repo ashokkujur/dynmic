@@ -8,17 +8,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<TextView> txtList =new  ArrayList<>();
+    HashMap<Integer,TextView> txtList =new HashMap<>();
     private LinearLayout parentLinearLayout;
+    int count= 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +44,35 @@ public class MainActivity extends AppCompatActivity {
     }
    public void addView(View v){
 
-
+        LinearLayout ll =  new LinearLayout(this);
+        ll.setOrientation(LinearLayout.HORIZONTAL);
        EditText text = new EditText(this);
-       txtList.add(text);
-       text.setHint("write someting");
-       parentLinearLayout.addView(text);
+
+       txtList.put(count,text); //add view in hash map with key , which is id of remove button
+
+       text.setHint("write something");
+       ll.addView(text);
+
+       Button btn = new Button(this);
+
+       btn.setId(++count);// here set id for button
+
+       btn.setText("Remove");
+
+       btn.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               LinearLayout linearParent =  (LinearLayout) v.getParent().getParent();
+               LinearLayout linearChild = (LinearLayout) v.getParent();
+               linearParent.removeView(linearChild);
+
+               txtList.remove(v.getId());// remove the hash map data using view id
+
+               Toast.makeText(getApplicationContext(),"Array size:"+Integer.toString(txtList.size()),Toast.LENGTH_LONG).show();
+           }
+       });
+       ll.addView(btn);
+       parentLinearLayout.addView(ll);
     }
     public void validate(View v)
     {
